@@ -29,5 +29,8 @@
 4. Image intents 
 6. SQLite database for user data
 7. Geofencing 
-8. Matchmaking queue using firebase 
+8. Matchmaking queue using firebase
+
+## Firebase
+[Setup Firebase On Android](https://www.youtube.com/watch?v=dRYnm_k3w1w&t=624s)
 

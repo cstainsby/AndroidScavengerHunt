@@ -47,4 +47,7 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 
+    // Declare the dependency for the Realtime Database library
+    // This will let us use the Real-Time firebase database
+    implementation 'com.google.firebase:firebase-database'
 }
