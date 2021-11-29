@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------------
 // DESC:
-//   This object will model the ScavengerHunt game,
+//   This will be an Async Task that finds an available game for players to join.
+//   The games will be stored in JSON,
 // PROJECT:
 //   Scavenger Hunt project
 // SOURCES:
@@ -11,14 +12,5 @@
 
 package stainsby.cole.androidscavengerhunt;
 
-import java.util.List;
-
-public class ScavengerHuntGame {
-
-    // the admin who will be in charge of running/setting up the game
-    GameAdmin admin;
-
-    // the players that will be participating in the game
-    List<GameParticipant> players;
-
+public class NotificationMessagingService {
 }

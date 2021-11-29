@@ -1,11 +1,23 @@
-//
+// ---------------------------------------------------------------------------
+// DESC:
+//   This class will be the model for a user, it will store all user information
+//   and metadata about their game performance
+// PROJECT:
+//   Scavenger Hunt project
+// SOURCES:
+//   N/A
+// DATE:
+//   11/26/2021
+// ---------------------------------------------------------------------------
 
 package stainsby.cole.androidscavengerhunt;
 
 public class User {
     // user info
-    private final String firstName;
-    private final String lastName;
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String email;
 
     // stats related to the user
     // TODO: we can add and remove these depending on what we want to keep track of
@@ -16,10 +28,12 @@ public class User {
     private Double scavLocsCapturedPerGame;
 
 
-    // create a new player, with new stats
-    public User(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    // DVC - blank user
+    public User() {
+        this.id = -1;
+        this.firstName = "";
+        this.lastName = "";
+        this.email = "";
 
         this.gamesWon = 0;
         this.gamesPlayed = 0;
@@ -28,10 +42,25 @@ public class User {
         this.scavLocsCapturedPerGame = 0.0;
     }
 
-    // load in an old player with
+    // EVC - for a user with no provided email
+    public User(String firstName, String lastName) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // EVC - for a new user with an email
+    public User(String firstName, String lastName, String email) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    // EVC - for an existing player
     public User(String firstName, String lastName,
                 Integer gamesWon, Integer gamesPlayed, Double gameWinRatio, Integer totalScavLocCaptures, Double scavLocsCapturedPerGame) {
-
+        this.id = -1;
         this.firstName = firstName;
         this.lastName = lastName;
 
@@ -43,4 +72,16 @@ public class User {
     }
 
     // TODO getters and setters for the user data
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
 }
