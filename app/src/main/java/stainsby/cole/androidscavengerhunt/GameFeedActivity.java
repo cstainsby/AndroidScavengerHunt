@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameFeedActivity extends AppCompatActivity {
 
@@ -47,6 +51,30 @@ public class GameFeedActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.game_feed_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle clicks on the items added to the menu
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        switch(itemId) {
+            case R.id.addMenuItem:
+                Toast.makeText(this, "new game created", Toast.LENGTH_SHORT).show();
+
+                DAOScavengerHuntGame db = new DAOScavengerHuntGame();
+
+                Random random = new Random();
+                int randomInt = random.nextInt(1000);
+
+                db.writeNewScavengerHuntGame(Integer.toString(randomInt));
+
+                adapter.notify();
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
