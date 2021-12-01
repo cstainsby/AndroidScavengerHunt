@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidScavengerHunt</string>
+    <string name="feedCreateGameButtonTitle">create a game</string>
 </resources>

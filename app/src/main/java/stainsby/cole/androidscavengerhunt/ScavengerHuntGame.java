@@ -16,9 +16,23 @@ import java.util.List;
 public class ScavengerHuntGame {
 
     // the admin who will be in charge of running/setting up the game
-    GameAdmin admin;
+    private GameAdmin admin;
 
     // the players that will be participating in the game
-    List<GameParticipant> players;
+    private List<GameParticipant> players;
 
+    private int id;
+
+    private String title;
+
+
+    public ScavengerHuntGame(String title) {
+        this.id = -1;
+        // TODO build this out, just using title for now, for demo purposes
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }
