@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -15,8 +16,8 @@ import java.nio.channels.AsynchronousChannel;
 public class MainActivity extends AppCompatActivity {
 
     DAOUser daoUser;
-    EditText editTextFirst;
-    EditText editTextLast;
+    EditText editTextUserName;
+    EditText editTextPassword;
     Button createButton;
 
     @Override
@@ -26,17 +27,36 @@ public class MainActivity extends AppCompatActivity {
 
         daoUser = new DAOUser();
 
-        editTextFirst = findViewById(R.id.testFirebaseEntryfirst);
-        editTextLast = findViewById(R.id.testFirebaseEntrylast);
+        editTextUserName = findViewById(R.id.testFirebaseEntryUsername);
+        editTextPassword = findViewById(R.id.testFirebaseEntryPassword);
 
         createButton = findViewById(R.id.createNewUserButton);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstName = editTextFirst.getText().toString();
-                String lastName = editTextLast.getText().toString();
 
-                daoUser.writeNewUser("1", firstName, lastName);
+                String userName = editTextUserName.getText().toString();
+                String password = editTextPassword.getText().toString();
+                boolean correctUser = true;
+                boolean correctPass = true;
+
+                if( userName.equals("") ) {
+                    Toast.makeText(MainActivity.this, "Enter a valid username", Toast.LENGTH_SHORT).show();
+                    correctUser = false;
+                } else {
+                    correctUser = true;
+                }
+
+                if( password.equals("") ) {
+                    Toast.makeText(MainActivity.this, "Enter a valid password", Toast.LENGTH_SHORT).show();
+                    correctPass = false;
+                } else {
+                    correctPass = true;
+                }
+
+                if( correctUser && correctPass ) {
+                    daoUser.writeNewUser(userName, password);
+                }
             }
         });
     }

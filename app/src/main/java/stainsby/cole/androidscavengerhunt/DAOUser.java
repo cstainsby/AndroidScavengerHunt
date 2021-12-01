@@ -11,11 +11,13 @@
 
 package stainsby.cole.androidscavengerhunt;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class DAOUser {
     private DatabaseReference mDatabase;
+    private int id = -1;
 
     public DAOUser() {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -27,15 +29,17 @@ public class DAOUser {
     }
 
     // create a new user
-    public void writeNewUser(String userId, String firstName, String lastName, String email) {
-        User user = new User(firstName, lastName, email);
-        mDatabase.child("users").child(userId).setValue(user);
+    public void writeNewUser(String userName, String password, String email) {
+        int id = getNextId();
+        User user = new User(id, userName, password, email);
+        mDatabase.child("users").child(Integer.toString(id)).setValue(user);
     }
 
     // create a new user - without email
-    public void writeNewUser(String userId, String firstName, String lastName) {
-        User user = new User(firstName, lastName);
-        mDatabase.child("users").child(userId).setValue(user);
+    public void writeNewUser(String userName, String password) {
+        int id = getNextId();
+        User user = new User(id, userName, password);
+        mDatabase.child("users").child(Integer.toString(id)).setValue(user);
     }
 
     // update an existing user
@@ -45,5 +49,10 @@ public class DAOUser {
 
     public void deleteUser(String userId) {
         mDatabase.child("users").child(userId).removeValue();
+    }
+
+    private int getNextId() {
+        id++;
+        return id;
     }
 }
