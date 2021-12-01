@@ -15,8 +15,8 @@ package stainsby.cole.androidscavengerhunt;
 public class User {
     // user info
     private int id;
-    private String firstName;
-    private String lastName;
+    private String userName;
+    private String password;
     private String email;
 
     // stats related to the user
@@ -31,8 +31,8 @@ public class User {
     // DVC - blank user
     public User() {
         this.id = -1;
-        this.firstName = "";
-        this.lastName = "";
+        this.userName = "";
+        this.password = "";
         this.email = "";
 
         this.gamesWon = 0;
@@ -43,26 +43,27 @@ public class User {
     }
 
     // EVC - for a user with no provided email
-    public User(String firstName, String lastName) {
+    public User(int id, String userName, String password) {
         this();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
     }
 
     // EVC - for a new user with an email
-    public User(String firstName, String lastName, String email) {
+    public User(int id, String userName, String password, String email) {
         this();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.id = id;
+        this.userName = userName;
+        this.password = password;
         this.email = email;
     }
 
     // EVC - for an existing player
-    public User(String firstName, String lastName,
+    public User(String userName, String password,
                 Integer gamesWon, Integer gamesPlayed, Double gameWinRatio, Integer totalScavLocCaptures, Double scavLocsCapturedPerGame) {
-        this.id = -1;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.userName = userName;
+        this.password = password;
 
         this.gamesWon = gamesWon;
         this.gamesPlayed = gamesPlayed;
@@ -72,16 +73,15 @@ public class User {
     }
 
     // TODO getters and setters for the user data
-
     public Integer getId() {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getPassword() {
+        return password;
     }
 }
