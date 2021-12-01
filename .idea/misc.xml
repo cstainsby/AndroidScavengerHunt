@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Cpsta/AndroidStudioProjects/AndroidScavengerHunt/app/src/main/res/layout/activity_game_feed.xml" value="0.2509057971014493" />
         <entry key="..\:/Users/Cpsta/AndroidStudioProjects/AndroidScavengerHunt/app/src/main/res/layout/activity_main.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/Cpsta/AndroidStudioProjects/AndroidScavengerHunt/app/src/main/res/layout/game_activity_card_view.xml" value="0.30416666666666664" />
+        <entry key="..\:/Users/Cpsta/AndroidStudioProjects/AndroidScavengerHunt/app/src/main/res/menu/game_feed_menu.xml" value="0.30416666666666664" />
       </map>
     </option>
   </component>

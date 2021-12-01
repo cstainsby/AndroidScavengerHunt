@@ -2,6 +2,7 @@ package stainsby.cole.androidscavengerhunt;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextFirst;
     EditText editTextLast;
     Button createButton;
+    Button toFeedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,17 @@ public class MainActivity extends AppCompatActivity {
                 String lastName = editTextLast.getText().toString();
 
                 daoUser.writeNewUser("1", firstName, lastName);
+            }
+        });
+
+        // TODO this implementation should probably be changed
+        toFeedButton = findViewById(R.id.toGameFeedButton);
+        toFeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, GameFeedActivity.class);
+
+                startActivity(intent);
             }
         });
     }
