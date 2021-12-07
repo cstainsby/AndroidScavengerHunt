@@ -26,12 +26,16 @@ public class GameFeedActivity extends AppCompatActivity {
 
     private CustomAdapter adapter;
 
+    DAOScavengerHuntGame db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_feed);
 
         games = new ArrayList<>();
+
+        db = new DAOScavengerHuntGame();
 
         RecyclerView recyclerView = findViewById(R.id.gameFeedRecyclerView);
 
@@ -62,14 +66,12 @@ public class GameFeedActivity extends AppCompatActivity {
             case R.id.addMenuItem:
                 Toast.makeText(this, "new game created", Toast.LENGTH_SHORT).show();
 
-                DAOScavengerHuntGame db = new DAOScavengerHuntGame();
-
                 Random random = new Random();
                 int randomInt = random.nextInt(1000);
 
                 db.writeNewScavengerHuntGame(Integer.toString(randomInt));
 
-                adapter.notify();
+                adapter.notifyDataSetChanged();
 
                 return true;
         }
