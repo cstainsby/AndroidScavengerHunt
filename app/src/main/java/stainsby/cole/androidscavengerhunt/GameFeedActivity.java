@@ -1,6 +1,7 @@
 package stainsby.cole.androidscavengerhunt;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,26 +17,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Random;
 
 public class GameFeedActivity extends AppCompatActivity {
 
     private List<ScavengerHuntGame> games;
-
     private CustomAdapter adapter;
 
-    DAOScavengerHuntGame db;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mScavengerGameDatabase;
+    private ChildEventListener mGameChildEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_feed);
-
-        games = new ArrayList<>();
-
-        db = new DAOScavengerHuntGame();
 
         RecyclerView recyclerView = findViewById(R.id.gameFeedRecyclerView);
 
@@ -47,6 +54,50 @@ public class GameFeedActivity extends AppCompatActivity {
         // implementation below
         adapter = new CustomAdapter();
         recyclerView.setAdapter(adapter);
+
+        games = new ArrayList<>();
+
+        setupFirebase();
+    }
+
+    private void setupFirebase() {
+        FirebaseApp.initializeApp(GameFeedActivity.this);
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        // get a string referencing the className of the object (pathname)
+        String pathName = ScavengerHuntGame.class.getSimpleName();
+
+        mScavengerGameDatabase = mFirebaseDatabase.getReference().child(pathName);
+
+
+        mGameChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                ScavengerHuntGame game = snapshot.getValue(ScavengerHuntGame.class);
+                games.add(game);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
     }
 
     // inflate the menu
@@ -64,15 +115,6 @@ public class GameFeedActivity extends AppCompatActivity {
 
         switch(itemId) {
             case R.id.addMenuItem:
-                Toast.makeText(this, "new game created", Toast.LENGTH_SHORT).show();
-
-                Random random = new Random();
-                int randomInt = random.nextInt(1000);
-
-                db.writeNewScavengerHuntGame(Integer.toString(randomInt));
-
-                adapter.notifyDataSetChanged();
-
                 return true;
         }
 
@@ -81,56 +123,44 @@ public class GameFeedActivity extends AppCompatActivity {
 
     class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
 
-        class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-            TextView cardText;
+            TextView titleView;
 
             public CustomViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 // find and store the views text and image view
-                cardText = null;
+                titleView = findViewById(R.id.gameTitleCardView);
 
                 // connect on click listeners to the view holder
                 itemView.setOnClickListener(this);
-                itemView.setOnLongClickListener(this);
             }
 
             public void updateView(ScavengerHuntGame game) {
                 // set the updated information to the display
-                cardText.setText(game.getTitle());
-
-                this.itemView.setBackgroundResource(R.color.white);
+                titleView.setText(game.getTitle());
             }
 
             @Override
             public void onClick(View view) {
             }
-
-            @Override
-            public boolean onLongClick(View view) {
-                return false;
-            }
         }
-
+        //---------------------------------------------
+        // inherited functions from Custom adapter
+        //---------------------------------------------
         @NonNull
         @Override
         public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
             View view = LayoutInflater.from(GameFeedActivity.this)
                     .inflate(R.layout.game_activity_card_view, parent, false);
-
             return new CustomViewHolder(view);
         }
 
-
-
         @Override
         public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
-
             // get a video from the list at position an update the view with it
             ScavengerHuntGame video = games.get(position);
-
             holder.updateView(video);
         }
 
