@@ -9,7 +9,7 @@
 
     <EditText
         android:id="@+id/testFirebaseEntryUsername"
-        android:hint="Enter username here"
+        android:hint="Enter email here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/testFirebaseEntryPassword"
@@ -32,7 +32,8 @@
         android:id="@+id/createNewUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create User"
+        android:text="Send"
+        android:onClick="onSendButtonClick"
         app:layout_constraintBottom_toTopOf="@id/toGameFeedButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

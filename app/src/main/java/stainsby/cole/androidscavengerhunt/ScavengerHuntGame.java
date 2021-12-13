@@ -36,3 +36,27 @@ public class ScavengerHuntGame {
         return title;
     }
 }
+
+/*
+    In Game XML Code
+
+    <FrameLayout
+        android:id="@+id/chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/tasks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/game_activity_menu" />
+ */
