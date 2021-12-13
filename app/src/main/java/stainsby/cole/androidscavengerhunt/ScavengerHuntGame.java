@@ -11,6 +11,8 @@
 
 package stainsby.cole.androidscavengerhunt;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 public class ScavengerHuntGame {
@@ -25,6 +27,8 @@ public class ScavengerHuntGame {
 
     private String title;
 
+    private List<LatLng> scavengerLocations;
+
 
     public ScavengerHuntGame(String title) {
         this.id = -1;
@@ -32,7 +36,34 @@ public class ScavengerHuntGame {
         this.title = title;
     }
 
+    //-------------------------------------------------
+    // getters
+    //-------------------------------------------------
     public String getTitle() {
         return title;
+    }
+
+    public List<LatLng> getScavengerLocations() {
+        return scavengerLocations;
+    }
+
+    //-------------------------------------------------
+    // setters
+    //-------------------------------------------------
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAdmin(GameAdmin admin) {
+        this.admin = admin;
+    }
+
+    public void setPlayers(List<GameParticipant> players) {
+        this.players = players;
+    }
+
+    public void setScavengerLocations(List<LatLng> scavengerLocations) {
+        this.scavengerLocations = scavengerLocations;
     }
 }
