@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
@@ -265,7 +266,21 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
                         Log.d(TAG, "onFailure: error removing geofences");
                     }
                 });
+    }
 
+    /**
+     * define menu actions
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

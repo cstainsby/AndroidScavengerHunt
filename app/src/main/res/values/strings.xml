@@ -2,4 +2,6 @@
     <string name="app_name">AndroidScavengerHunt</string>
     <string name="feedCreateGameButtonTitle">create a game</string>
     <string name="title_activity_scavenger_hunt">ScavengerHuntActivity</string>
+    <string name="messages">Messages</string>
+    <string name="location_list">Location List</string>
 </resources>
