@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,10 +60,28 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // add the other in game fragments to the activity
+        /*if(savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.inGameChatFragement, inGameChatFragment.class, null)
+                    .add(R.id.inGameScavengerLocationsFragment, inGameScavengerLocationFragment.class, null)
+                    .commit();
+        }*/
         geofencingClient = LocationServices.getGeofencingClient(this);
     }
 
     public void loadGameAttributes(ScavengerHuntGame game) {
+
+        // TODO: 12/13/2021
+        //  set test game attributes just to see if things are working
+
+        List<LatLng> scavLocsTest = new ArrayList<>();
+        scavLocsTest.add(new LatLng(37, -122.08));
+        scavLocsTest.add(new LatLng(37.5, -122.5));
+        game.setScavengerLocations(scavLocsTest);
+
+
         // set game attributes
         // based on the given scav locations we will need to determine the size of the geofence
         // search for the location with the largest distance from the center point of all locations
@@ -106,7 +125,8 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         //int offset = random.nextInt(Math.floor(extraSpace));
 
 
-        drawCircle(meanCoordinates, radius);
+        drawCircle(meanCoordinates, (float)radius);
+        addGeofence(meanCoordinates, (float)radius);
     }
 
 
@@ -129,8 +149,12 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         enableUserLocation();
+        loadGameAttributes(new ScavengerHuntGame(""));
     }
 
+    /**
+     * get permissions if needed to access user location
+     */
     private void enableUserLocation() {
         // we need to get the user permission at runtime to access their FINE LOCATION
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -144,7 +168,6 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
                     LOCATION_REQUEST_CODE);
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -289,10 +312,11 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
      * @param latLng
      * @param radius
      */
-    private void drawCircle(LatLng latLng, double radius) {
+    private void drawCircle(LatLng latLng, float radius) {
+        Log.d(TAG, "drawCircle: drawing circle radius: " + radius + " at lat: " + latLng.latitude + " lng: " + latLng.longitude);
         CircleOptions circleOptions = new CircleOptions();
-        circleOptions.center(latLng);
-        circleOptions.radius(radius);
+        circleOptions.center(new LatLng(-34, 151));
+        circleOptions.radius(200);
         circleOptions.strokeColor(Color.argb(255, 255, 0,0));
         circleOptions.fillColor(Color.argb(64, 255, 0,0));
         circleOptions.strokeWidth(4);
