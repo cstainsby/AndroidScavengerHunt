@@ -31,12 +31,16 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
+<<<<<<< HEAD
     private DatabaseReference mDatabase;
     private ChildEventListener childEventListener;
     private FirebaseDatabase db;
 
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
+=======
+    Button toTestGameButton;
+>>>>>>> cole
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, GameFeedActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
+        toTestGameButton = findViewById(R.id.toGameTestButton);
+        toTestGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ScavengerHuntActivity.class);
 
                 startActivity(intent);
             }
