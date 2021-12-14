@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
+
+    Button toTestGameButton;
+
     private DatabaseReference mDatabase;
     private ChildEventListener childEventListener;
     private FirebaseDatabase db;
@@ -89,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, GameFeedActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
+        toTestGameButton = findViewById(R.id.toGameTestButton);
+        toTestGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ScavengerHuntActivity.class);
 
                 startActivity(intent);
             }
