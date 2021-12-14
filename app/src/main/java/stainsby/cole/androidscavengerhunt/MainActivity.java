@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button createButton;
     Button toFeedButton;
+
     Button toTestGameButton;
 
     private DatabaseReference mDatabase;
@@ -119,6 +120,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setupFirebase();
+        toTestGameButton = findViewById(R.id.toGameTestButton);
+        toTestGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ScavengerHuntActivity.class);
+
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupFirebase() {

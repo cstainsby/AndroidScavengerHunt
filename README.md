@@ -32,5 +32,7 @@
 8. Matchmaking queue using firebase
 
 ## Firebase
+[Link to the database](https://console.firebase.google.com/project/scavengerhuntapp-37acb/overview)
 [Setup Firebase On Android](https://www.youtube.com/watch?v=dRYnm_k3w1w&t=624s)
+
 
