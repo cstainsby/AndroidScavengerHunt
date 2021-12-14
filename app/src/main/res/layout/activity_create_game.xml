@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".createGameActivity"
+    tools:context=".CreateGameActivity"
     android:padding="8dp">
 
     <!-- TODO: Update blank fragment layout -->
@@ -28,7 +28,8 @@
         android:text="Post"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addScavLocMapButton" />
 
 
     <TextView
@@ -64,7 +65,7 @@
         android:text="Number of Players"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/createGameButton"
+        app:layout_constraintBottom_toTopOf="@+id/addScavLocMapButton"
         app:layout_constraintEnd_toStartOf="@+id/createGameNumPlayersEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createGameTitleTextView" />
@@ -80,6 +81,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/createGameNumPlayersTextView"
         app:layout_constraintTop_toTopOf="@+id/createGameNumPlayersTextView" />
+
+    <Button
+        android:id="@+id/addScavLocMapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Add Scavenger Location"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createGameNumPlayersEditText" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

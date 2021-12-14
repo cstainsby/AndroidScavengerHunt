@@ -7,16 +7,13 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +27,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,9 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
-import java.util.Random;
 
 public class GameFeedActivity extends AppCompatActivity {
 
@@ -53,9 +47,9 @@ public class GameFeedActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseMessagingService messagingService;
     private DatabaseReference mScavengerGameDatabase;
-    private ChildEventListener mGameChildEventListener;
 
-    private ActivityResultLauncher<Intent> launcher;
+    private ActivityResultLauncher<Intent> createGameLauncher;
+    private ActivityResultLauncher<Intent> startGameLauncher;
 
 
     @Override
@@ -76,7 +70,7 @@ public class GameFeedActivity extends AppCompatActivity {
 
         games = new ArrayList<>();
 
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+        createGameLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
@@ -103,6 +97,17 @@ public class GameFeedActivity extends AppCompatActivity {
                         }
                     }
                 });
+        startGameLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // get game results
+                        if(result.getResultCode() == Activity.RESULT_OK) {
+                            Log.d(TAG, "onActivityResult: game over");
+                            Toast.makeText(GameFeedActivity.this, "Game Over", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         setupFirebase();
     }
@@ -122,6 +127,11 @@ public class GameFeedActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int i = 0;
                 games.clear();
+
+                // TODO color needs to be set based on if user is in the game or not
+                //  I need to store a list of users currently in the game queue as a list
+                //  this will also allow me to see how many players are registered to play the game
+                //  Authentication needed
 
                 for (DataSnapshot game : snapshot.getChildren()) {
                     String gameID = "";
@@ -192,11 +202,11 @@ public class GameFeedActivity extends AppCompatActivity {
 
         switch(itemId) {
             case R.id.addMenuItem:
-                Intent intent = new Intent(this, createGameActivity.class);
+                Intent intent = new Intent(this, CreateGameActivity.class);
 
                 Log.d(TAG, "onOptionsItemSelected: Going into create activity");
                 Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
-                launcher.launch(intent);
+                createGameLauncher.launch(intent);
                 return true;
         }
 
@@ -253,6 +263,7 @@ public class GameFeedActivity extends AppCompatActivity {
                         .build();*/
 
                 if(!gameJoined) {
+                    view.setBackgroundColor(getResources().getColor(R.color.browser_actions_bg_grey));
                     // subscribe to the id of the game that the view is holding
                     FirebaseMessaging.getInstance().subscribeToTopic("")
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -268,6 +279,7 @@ public class GameFeedActivity extends AppCompatActivity {
                             });
                 }
                 else {
+                    view.setBackgroundColor(getResources().getColor(R.color.white));
                     FirebaseMessaging.getInstance().unsubscribeFromTopic("")
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
