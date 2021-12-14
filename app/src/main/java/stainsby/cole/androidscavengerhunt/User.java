@@ -14,7 +14,7 @@ package stainsby.cole.androidscavengerhunt;
 
 public class User {
     // user info
-    private int id;
+    private String id;
     private String userName;
     private String password;
     private String email;
@@ -27,7 +27,7 @@ public class User {
     private Integer totalScavLocCaptures;
     private Double scavLocsCapturedPerGame;
 
-
+/*
     // DVC - blank user
     public User() {
         this.id = -1;
@@ -48,8 +48,14 @@ public class User {
         this.id = id;
         this.userName = userName;
         this.password = password;
-    }
+    }*/
 
+    public User(String id, String userName) {
+        //this();
+        this.id = id;
+        this.userName = userName;
+    }
+/*
     // EVC - for a new user with an email
     public User(int id, String userName, String password, String email) {
         this();
@@ -70,10 +76,10 @@ public class User {
         this.gameWinRatio = gameWinRatio;
         this.totalScavLocCaptures = totalScavLocCaptures;
         this.scavLocsCapturedPerGame = scavLocsCapturedPerGame;
-    }
+    }*/
 
     // TODO getters and setters for the user data
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
