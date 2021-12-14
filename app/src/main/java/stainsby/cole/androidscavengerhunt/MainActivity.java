@@ -2,9 +2,11 @@ package stainsby.cole.androidscavengerhunt;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
+    Button toTestGameButton;
+
     private DatabaseReference mDatabase;
     private ChildEventListener childEventListener;
     private FirebaseDatabase db;
@@ -75,8 +79,24 @@ public class MainActivity extends AppCompatActivity {
 
         chatMessageList = new ArrayList<>();
 
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Toast.makeText(MainActivity.this, "You are now signed in", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                        // they backed out of the sign in activity
+                        // let's exit
+                        finish();
+                    }
+                }
+            });
+
         //old sign in method-----------------------------------------
-/*        createButton = findViewById(R.id.createNewUserButton);
+        /*
+        createButton = findViewById(R.id.createNewUserButton);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,11 +142,50 @@ public class MainActivity extends AppCompatActivity {
         setupFirebase();
     }
 
+
     private void setupFirebase() {
         // initialize the firebase references
         FirebaseApp.initializeApp(this);
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
+
+        mMessagesDatabaseReference =
+                mFirebaseDatabase.getReference()
+                        .child("messages");
+        mMessagesChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // called for each message already in our db
+                // called for each new message add to our db
+                // dataSnapshot stores the ChatMessage
+                Log.d(TAG, "onChildAdded: " + s);
+                ChatMessage chatMessage =
+                        dataSnapshot.getValue(ChatMessage.class);
+                // add it to our list and notify our adapter
+                chatMessageList.add(chatMessage);
+                //adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -182,8 +241,7 @@ public class MainActivity extends AppCompatActivity {
         userName = user.getDisplayName();
         // listen for database changes with childeventlistener
         // wire it up!
-        mMessagesDatabaseReference
-                .addChildEventListener(mMessagesChildEventListener);
+        mMessagesDatabaseReference.addChildEventListener(mMessagesChildEventListener);
     }
 
     public void onSendButtonClick(View view) {
