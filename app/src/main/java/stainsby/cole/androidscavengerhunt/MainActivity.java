@@ -31,16 +31,14 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
-<<<<<<< HEAD
+    Button toTestGameButton;
+
     private DatabaseReference mDatabase;
     private ChildEventListener childEventListener;
     private FirebaseDatabase db;
 
     FirebaseAuth mFirebaseAuth;
     FirebaseAuth.AuthStateListener mAuthStateListener;
-=======
-    Button toTestGameButton;
->>>>>>> cole
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +106,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

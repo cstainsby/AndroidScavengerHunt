@@ -47,8 +47,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/createNewUserButton" />
-<<<<<<< HEAD
-=======
 
     <Button
         android:id="@+id/toGameTestButton"
@@ -60,5 +58,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toGameFeedButton" />
 
->>>>>>> cole
 </androidx.constraintlayout.widget.ConstraintLayout>
