@@ -14,11 +14,14 @@
         <!-- Customize your theme here. -->
     </style>
 
+<<<<<<< HEAD
     <style name="ThemeOverlay.AndroidScavengerHunt.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 
+=======
+>>>>>>> 5543f2256abc12a335701831a67275d95020d4bb
     <style name="Theme.AndroidScavengerHunt.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

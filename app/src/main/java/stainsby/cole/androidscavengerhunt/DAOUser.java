@@ -52,12 +52,12 @@ public class DAOUser {
         mDatabase.child("users").child(userName).setValue(user);
     }
      */
-
+/*
     // create a new user - without email
     public void writeNewUser(String userName, String password) {
         User user = new User(id, userName, password);
         mDatabase.child("users").child(userName).setValue(user);
-    }
+    }*/
     /*
     // update an existing user
     public void updateExistingUserEmail(String userName, String email) {
