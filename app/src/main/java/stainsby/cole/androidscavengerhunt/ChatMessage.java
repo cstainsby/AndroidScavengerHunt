@@ -1,5 +1,6 @@
 package stainsby.cole.androidscavengerhunt;
 
+//TODO delete if we don't want to add messaging
 public class ChatMessage {
     private String author;
     private String content;

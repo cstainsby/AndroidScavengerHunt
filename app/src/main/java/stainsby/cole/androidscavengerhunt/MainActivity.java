@@ -25,6 +25,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> launcher;
+
+    User currentUser;
+    String currentUID;
 
     DAOUser daoUser;
     EditText editTextUserName;
@@ -74,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         daoUser = new DAOUser();
 
-        editTextUserName = findViewById(R.id.testFirebaseEntryUsername);
-        editTextPassword = findViewById(R.id.testFirebaseEntryPassword);
-
         chatMessageList = new ArrayList<>();
 
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -94,39 +95,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        //old sign in method-----------------------------------------
-        /*
+        //TODO make username request only display once
+        editTextUserName = findViewById(R.id.testFirebaseEntryUsername);
         createButton = findViewById(R.id.createNewUserButton);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if( !editTextUserName.getText().toString().equals("") )
+                userName = editTextUserName.getText().toString();
 
-                String userName = editTextUserName.getText().toString();
-                String password = editTextPassword.getText().toString();
-                boolean correctUser = true;
-                boolean correctPass = true;
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                user.getUid();
 
+                currentUser = new User(currentUID, userName);
+                mDatabase.child("users").child(currentUID).setValue(currentUser);
 
-                if (userName.equals("")) {
-                    Toast.makeText(MainActivity.this, "Enter a valid username", Toast.LENGTH_SHORT).show();
-                    correctUser = false;
-                } else {
-                    correctUser = true;
-                }
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(userName).build();
 
-                if (password.equals("")) {
-                    Toast.makeText(MainActivity.this, "Enter a valid password", Toast.LENGTH_SHORT).show();
-                    correctPass = false;
-                } else {
-                    correctPass = true;
-                }
+                user.updateProfile(profileUpdates);
 
-                if (correctUser && correctPass) {
-                    daoUser.writeNewUser(userName, password);
-                }
+                toFeedButton.setVisibility(1);
             }
-        });*/
-        //-----------------------------------------------------------
+        });
 
         // TODO this implementation should probably be changed
         toFeedButton = findViewById(R.id.toGameFeedButton);
@@ -142,6 +133,11 @@ public class MainActivity extends AppCompatActivity {
         setupFirebase();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
 
     private void setupFirebase() {
         // initialize the firebase references
@@ -195,6 +191,11 @@ public class MainActivity extends AppCompatActivity {
                 // get the get current user, if there is one
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    if( !user.getDisplayName().equals("") ) {
+                        createButton.setText("Reset Username");
+                    } else {
+                       toFeedButton.setVisibility(0);
+                    }
                     // user is signed in
                     // step 4
                     setupUserSignedIn(user);
@@ -239,33 +240,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupUserSignedIn(FirebaseUser user) {
         // get the user's name
         userName = user.getDisplayName();
+        Log.d(TAG, user.getDisplayName());
+
         // listen for database changes with childeventlistener
         // wire it up!
         mMessagesDatabaseReference.addChildEventListener(mMessagesChildEventListener);
-    }
-
-    public void onSendButtonClick(View view) {
-        // show a log message
-        Log.d(TAG, "onSendButtonClick: ");
-        // push up to "messages" whatever is
-        // in the edittext
-        EditText editText = (EditText)
-                findViewById(R.id.testFirebaseEntryUsername);
-        String currText = editText.getText().toString();
-        if (currText.isEmpty()) {
-            Toast.makeText(this, "Please enter a message first", Toast.LENGTH_SHORT).show();
-        } else {
-            // we have a message to send
-            // create a ChatMessage object to push
-            // to the database
-            ChatMessage chatMessage = new
-                    ChatMessage(userName,
-                    currText);
-            mMessagesDatabaseReference
-                    .push()
-                    .setValue(chatMessage);
-            // warmup task #1
-            editText.setText("");
-        }
     }
 }

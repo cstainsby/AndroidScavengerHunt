@@ -9,30 +9,19 @@
 
     <EditText
         android:id="@+id/testFirebaseEntryUsername"
-        android:hint="Enter email here"
+        android:hint="Enter userName here"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/testFirebaseEntryPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/testFirebaseEntryPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Enter password here"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@id/createNewUserButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/testFirebaseEntryUsername" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/createNewUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:text="Set Username"
         android:onClick="onSendButtonClick"
         app:layout_constraintBottom_toTopOf="@id/toGameFeedButton"
         app:layout_constraintEnd_toEndOf="parent"
