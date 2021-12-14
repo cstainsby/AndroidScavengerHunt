@@ -29,13 +29,6 @@ if you invite a friend, we will go off the assumption that they are close to you
     and will decide which games to join
 
 
-once a clique is established, it might be larger than what the game needs. Do an A* hueristic search
-    to find the "best game". This search would take into account
-    1) friends
-    2) whether a role has been filled
-    3) distance
-    4)
-
 TODO maybe because the admin is setting up the game we can center the game around him
 
 TODO if you aren't in range of any admins hosting a game, show a recycler view of where they are,

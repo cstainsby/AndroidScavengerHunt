@@ -149,7 +149,7 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         enableUserLocation();
-        loadGameAttributes(new ScavengerHuntGame(""));
+        //TODO loadGameAttributes();
     }
 
     /**

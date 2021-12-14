@@ -47,6 +47,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
 
 
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
@@ -79,6 +81,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.firebaseui:firebase-ui-auth:8.0.0'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
 }
 
 apply plugin: 'com.google.gms.google-services'

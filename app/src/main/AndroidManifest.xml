@@ -7,8 +7,14 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
@@ -19,11 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidScavengerHunt">
 
-
-        <receiver
-            android:name=".GeofenceBroadcastReciever"
-            android:enabled="true"
-            android:exported="true"></receiver>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,6 +37,19 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <receiver
+            android:name=".GeofenceBroadcastReciever"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".FirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ScavengerHuntActivity"
             android:exported="true"
@@ -44,9 +58,18 @@
             android:name=".GameFeedActivity"
             android:exported="true" />
         <activity
+<<<<<<< HEAD
+            android:name=".CreateGameActivity"
+            android:exported="true" />
+        <activity
+            android:name=".CreateGamePlotLocationsActivity"
+            android:exported="true"/>
+        <activity
+=======
             android:name=".SettingsActivity"
             android:exported="true" />
         <activity
+>>>>>>> 5543f2256abc12a335701831a67275d95020d4bb
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

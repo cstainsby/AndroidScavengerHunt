@@ -25,15 +25,18 @@ public class ScavengerHuntGame {
 
     private int id;
 
+    private int lobbySize;
+
     private String title;
 
     private List<LatLng> scavengerLocations;
 
 
-    public ScavengerHuntGame(String title) {
+    public ScavengerHuntGame(String title, int lobbySize) {
         this.id = -1;
         // TODO build this out, just using title for now, for demo purposes
         this.title = title;
+        this.lobbySize = lobbySize;
     }
 
     //-------------------------------------------------
