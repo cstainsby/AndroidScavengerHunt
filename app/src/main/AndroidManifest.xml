@@ -23,7 +23,15 @@
         <receiver
             android:name=".GeofenceBroadcastReciever"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true"/>
+
+        <service
+            android:name=".FirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

@@ -1,3 +1,5 @@
+// setup android FCM and tokens: https://firebase.google.com/docs/cloud-messaging/android/client
+
 package stainsby.cole.androidscavengerhunt;
 
 import androidx.annotation.NonNull;
@@ -6,8 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,12 +22,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -31,10 +39,13 @@ import java.util.Random;
 
 public class GameFeedActivity extends AppCompatActivity {
 
+    private static final String TAG = "GameFeedActivity";
+
     private List<ScavengerHuntGame> games;
     private CustomAdapter adapter;
 
     private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseMessagingService messagingService;
     private DatabaseReference mScavengerGameDatabase;
     private ChildEventListener mGameChildEventListener;
 
@@ -63,6 +74,8 @@ public class GameFeedActivity extends AppCompatActivity {
     private void setupFirebase() {
         FirebaseApp.initializeApp(GameFeedActivity.this);
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        messagingService = new FirebaseMessagingService(this);
 
         // get a string referencing the className of the object (pathname)
         String pathName = ScavengerHuntGame.class.getSimpleName();
@@ -98,6 +111,27 @@ public class GameFeedActivity extends AppCompatActivity {
 
             }
         };
+
+        // setup the token for the client app instance
+        //
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        // Log and toast
+                        String msg = "new token: " + token;
+                        Log.d(TAG, msg);
+                        Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // inflate the menu
@@ -121,11 +155,21 @@ public class GameFeedActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
 
         class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-            TextView titleView;
+            private TextView titleView;
+
+            // this will be what identifies a game in the database
+            // to keep it unique we will structure the name like:
+            //      "game title"_hash
+            private String gameCode;
+
+            // user specific items
+            boolean gameJoined;
 
             public CustomViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -135,6 +179,13 @@ public class GameFeedActivity extends AppCompatActivity {
 
                 // connect on click listeners to the view holder
                 itemView.setOnClickListener(this);
+
+                // TODO games that you have joined should persist
+                //  if you load in a game that is still available to join
+                //  that you have previously joined, your user account should remember that
+                // when creating the game we will initially set
+                // TODO: 12/13/2021 in reality this should be a check to the user account (is this in your queue of joined games)
+                gameJoined = false;
             }
 
             public void updateView(ScavengerHuntGame game) {
@@ -144,6 +195,42 @@ public class GameFeedActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                String topic = this.gameCode;      // topic will be the game you are joining/leaving
+                /*Message.builder()
+                        .putData("score", "850")
+                        .putData("time", "2:45")
+                        .setTopic(topic)
+                        .build();*/
+
+                if(!gameJoined) {
+                    // subscribe to the id of the game that the view is holding
+                    FirebaseMessaging.getInstance().subscribeToTopic("")
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    String msg = "Game joined";
+                                    if (!task.isSuccessful()) {
+                                        msg = "Failed to join game";
+                                    }
+                                    Log.d(TAG, "onComplete: " + msg);
+                                    Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("")
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    String msg = "You have left the game queue";
+                                    if (!task.isSuccessful()) {
+                                        msg = "Failed to leave game";
+                                    }
+                                    Log.d(TAG, "onComplete: " + msg);
+                                    Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
             }
         }
         //---------------------------------------------
