@@ -50,6 +50,9 @@
             android:name=".GameFeedActivity"
             android:exported="true" />
         <activity
+            android:name=".createGameActivity"
+            android:exported="true"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

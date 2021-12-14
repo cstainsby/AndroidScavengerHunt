@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -80,18 +82,25 @@ public class GameFeedActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
                         // load in created game contents
                         // load it into firebase
-                        Intent data = result.getData();
+                        if(result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
 
-                        String gameTitle = data.getStringExtra("title");
-                        Integer numPlayers = data.getIntExtra("numPlayers", 0);
+                            String gameTitle = data.getStringExtra("title");
+                            Integer numPlayers = data.getIntExtra("numPlayers", 0);
 
-                        // append a hash code to the end of the title as an id to prevent collisions
-                        String gameID = gameTitle + "_" + hashCode();
-                        ScavengerHuntGame game = new ScavengerHuntGame(gameTitle, numPlayers);
+                            // append a hash code to the end of the title as an id to prevent collisions
+                            String gameID = gameTitle + "_" + hashCode();
 
-
-                        String path = ScavengerHuntGame.class.getSimpleName();
-                        mScavengerGameDatabase.child(path).child(gameID).setValue(game);
+                            // add game items to firebase
+                            mScavengerGameDatabase.child(gameID);
+                            mScavengerGameDatabase.child(gameID).child("title").setValue(gameTitle);
+                            mScavengerGameDatabase.child(gameID).child("numPlayers").setValue(numPlayers);
+                            Log.d(TAG, "onActivityResult: add game: " + gameID + " to database");
+                            Toast.makeText(GameFeedActivity.this, "Game Posted", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Log.d(TAG, "onActivityResult: error on intent result");
+                        }
                     }
                 });
 
@@ -108,36 +117,43 @@ public class GameFeedActivity extends AppCompatActivity {
         String pathName = ScavengerHuntGame.class.getSimpleName();
 
         mScavengerGameDatabase = mFirebaseDatabase.getReference().child(pathName);
-
-
-        mGameChildEventListener = new ChildEventListener() {
+        mScavengerGameDatabase.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                ScavengerHuntGame game = snapshot.getValue(ScavengerHuntGame.class);
-                games.add(game);
-                adapter.notifyDataSetChanged();
-            }
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int i = 0;
+                games.clear();
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                for (DataSnapshot game : snapshot.getChildren()) {
+                    String gameID = "";
+                    String title = "";
+                    String numPlayers = "";
+                    try {
+                        gameID = game.getValue().toString();
+                        title = game.child("title").getValue().toString();
+                        numPlayers = game.child("numPlayers").getValue().toString();
+                    } catch(NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    if(!title.equals("") && !numPlayers.equals("")) {
+                        Log.d(TAG, "onDataChange: making game object \n    title " + title + "\n    " + numPlayers);
+                        games.add(new ScavengerHuntGame(
+                                title,
+                                Integer.parseInt(numPlayers)
+                        ));
+                        adapter.notifyItemChanged(i);
+                        i++;
+                    }
+                    else {
+                        Log.d(TAG, "onDataChange: error, empty input");
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d(TAG, "onCancelled: Error reading from database on change");
             }
-        };
+        });
 
         // setup the token for the client app instance
         //
@@ -207,7 +223,7 @@ public class GameFeedActivity extends AppCompatActivity {
                 super(itemView);
 
                 // find and store the views text and image view
-                titleView = findViewById(R.id.gameTitleCardView);
+                titleView = itemView.findViewById(R.id.gameTitleCardView);
 
                 // connect on click listeners to the view holder
                 itemView.setOnClickListener(this);
@@ -222,7 +238,9 @@ public class GameFeedActivity extends AppCompatActivity {
 
             public void updateView(ScavengerHuntGame game) {
                 // set the updated information to the display
-                titleView.setText(game.getTitle());
+                Log.d(TAG, "updateView: updating with game object title " + game.getTitle());
+                String title = game.getTitle();
+                titleView.setText(title);
             }
 
             @Override
@@ -280,6 +298,7 @@ public class GameFeedActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
             // get a video from the list at position an update the view with it
             ScavengerHuntGame video = games.get(position);
+            Log.d(TAG, "onBindViewHolder: update at position " + position);
             holder.updateView(video);
         }
 
