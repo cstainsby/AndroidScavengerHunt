@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
@@ -44,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
     User currentUser;
     String currentUID;
 
-    DAOUser daoUser;
-    EditText editTextUserName;
-    EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
     Button toTestGameButton;
@@ -55,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener childEventListener;
     private FirebaseDatabase db;
 
+    // TODO decide whether to add name change fragment
     String userName = "Anonymous";
-    List<ChatMessage> chatMessageList;
 
     FirebaseDatabase mFirebaseDatabase;
 
@@ -76,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
         String className = User.class.getSimpleName();
         mDatabase = db.getReference(className);
 
-        daoUser = new DAOUser();
-
-        chatMessageList = new ArrayList<>();
-
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -95,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        //TODO make username request only display once
+        /*//TODO make username request only display once
         editTextUserName = findViewById(R.id.testFirebaseEntryUsername);
         createButton = findViewById(R.id.createNewUserButton);
         createButton.setOnClickListener(new View.OnClickListener() {
@@ -107,17 +101,11 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 user.getUid();
 
-                currentUser = new User(currentUID, userName);
+                currentUser = new User(currentUID, user.getDisplayName());
                 mDatabase.child("users").child(currentUID).setValue(currentUser);
 
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(userName).build();
-
-                user.updateProfile(profileUpdates);
-
-                toFeedButton.setVisibility(1);
             }
-        });
+        });*/
 
         // TODO this implementation should probably be changed
         toFeedButton = findViewById(R.id.toGameFeedButton);
@@ -133,33 +121,22 @@ public class MainActivity extends AppCompatActivity {
         setupFirebase();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
-
     private void setupFirebase() {
         // initialize the firebase references
         FirebaseApp.initializeApp(this);
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
 
+        //TODO delete messages reference
         mMessagesDatabaseReference =
                 mFirebaseDatabase.getReference()
                         .child("messages");
         mMessagesChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                // called for each message already in our db
-                // called for each new message add to our db
-                // dataSnapshot stores the ChatMessage
                 Log.d(TAG, "onChildAdded: " + s);
                 ChatMessage chatMessage =
                         dataSnapshot.getValue(ChatMessage.class);
-                // add it to our list and notify our adapter
-                chatMessageList.add(chatMessage);
-                //adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -191,22 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 // get the get current user, if there is one
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    if( !user.getDisplayName().equals("") ) {
-                        createButton.setText("Reset Username");
-                    } else {
-                       toFeedButton.setVisibility(0);
-                    }
                     // user is signed in
                     // step 4
                     setupUserSignedIn(user);
                 } else {
-                    // user is signed out
-                    // step 5
-                    // we need an intent
-                    // the firebaseUI Github repo README.md
-                    // we have used builders before in this class
-                    // AlertDialog.Builder
-                    // return instance to support chaining
                     Intent intent = AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
@@ -234,16 +199,47 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         // remove it
         mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        chatMessageList.clear();
     }
 
     private void setupUserSignedIn(FirebaseUser user) {
         // get the user's name
-        userName = user.getDisplayName();
+        // get the user's name
         Log.d(TAG, user.getDisplayName());
+
+        currentUser = new User(user.getUid(), user.getDisplayName());
+        mDatabase.child("users").child(user.getUid()).setValue(currentUser);
 
         // listen for database changes with childeventlistener
         // wire it up!
         mMessagesDatabaseReference.addChildEventListener(mMessagesChildEventListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(settingsIntent);
+
+            //TODO add this code to gamefeed fragments shit
+            /*NavHostFragment.findNavController(MainActivity.this)
+                    .navigate(R.id.action_MainActivity_to_SettingsFragment);*/
+        } else if (id == R.id.action_signout) {
+            AuthUI.getInstance().signOut(this);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">AndroidScavengerHunt</string>
     <string name="feedCreateGameButtonTitle">create a game</string>
+ack    <string name="action_settings">Settings</string>
+    <string name="settings_fragment_label" />
+    <string name="back">back</string>
+    <string name="main_fragment_label">Settings</string>
 </resources>
