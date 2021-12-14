@@ -2,6 +2,10 @@
 
 package stainsby.cole.androidscavengerhunt;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,6 +53,8 @@ public class GameFeedActivity extends AppCompatActivity {
     private DatabaseReference mScavengerGameDatabase;
     private ChildEventListener mGameChildEventListener;
 
+    private ActivityResultLauncher<Intent> launcher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,27 @@ public class GameFeedActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         games = new ArrayList<>();
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        // load in created game contents
+                        // load it into firebase
+                        Intent data = result.getData();
+
+                        String gameTitle = data.getStringExtra("title");
+                        Integer numPlayers = data.getIntExtra("numPlayers", 0);
+
+                        // append a hash code to the end of the title as an id to prevent collisions
+                        String gameID = gameTitle + "_" + hashCode();
+                        ScavengerHuntGame game = new ScavengerHuntGame(gameTitle, numPlayers);
+
+
+                        String path = ScavengerHuntGame.class.getSimpleName();
+                        mScavengerGameDatabase.child(path).child(gameID).setValue(game);
+                    }
+                });
 
         setupFirebase();
     }
@@ -149,6 +176,11 @@ public class GameFeedActivity extends AppCompatActivity {
 
         switch(itemId) {
             case R.id.addMenuItem:
+                Intent intent = new Intent(this, createGameActivity.class);
+
+                Log.d(TAG, "onOptionsItemSelected: Going into create activity");
+                Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
+                launcher.launch(intent);
                 return true;
         }
 
@@ -166,7 +198,7 @@ public class GameFeedActivity extends AppCompatActivity {
             // this will be what identifies a game in the database
             // to keep it unique we will structure the name like:
             //      "game title"_hash
-            private String gameCode;
+            private String gameID;
 
             // user specific items
             boolean gameJoined;
@@ -195,7 +227,7 @@ public class GameFeedActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                String topic = this.gameCode;      // topic will be the game you are joining/leaving
+                String topic = this.gameID;      // topic will be the game you are joining/leaving
                 /*Message.builder()
                         .putData("score", "850")
                         .putData("time", "2:45")
