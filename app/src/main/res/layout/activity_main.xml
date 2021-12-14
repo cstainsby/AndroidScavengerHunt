@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:hint="Enter password here"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Enter lastname here"
         app:layout_constraintBottom_toTopOf="@id/createNewUserButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

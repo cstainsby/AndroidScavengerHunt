@@ -1,16 +1,26 @@
 package stainsby.cole.androidscavengerhunt;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseError;
 
 import java.nio.channels.AsynchronousChannel;
 
@@ -21,12 +31,24 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextPassword;
     Button createButton;
     Button toFeedButton;
+
     Button toTestGameButton;
+
+    private DatabaseReference mDatabase;
+    private ChildEventListener childEventListener;
+    private FirebaseDatabase db;
+
+    FirebaseAuth mFirebaseAuth;
+    FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = FirebaseDatabase.getInstance();
+        String className = User.class.getSimpleName();
+        mDatabase = db.getReference(className);
 
         daoUser = new DAOUser();
 
@@ -42,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 String password = editTextPassword.getText().toString();
                 boolean correctUser = true;
                 boolean correctPass = true;
+
 
                 if( userName.equals("") ) {
                     Toast.makeText(MainActivity.this, "Enter a valid username", Toast.LENGTH_SHORT).show();
@@ -84,4 +107,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

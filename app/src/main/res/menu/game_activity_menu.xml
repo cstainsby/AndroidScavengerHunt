@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/back"
+        android:title="back"
+        android:icon="@drawable/rewind_button" />
+    <item android:id="@+id/map"
+        android:title="map"
+        android:icon="@drawable/maps" />
+    <item android:id="@+id/tasks"
+        android:title="tasks"
+        android:icon="@drawable/to_do_list" />
+    <item android:id="@+id/chat"
+        android:title="chat"
+        android:icon="@drawable/chat" />
+</menu>
