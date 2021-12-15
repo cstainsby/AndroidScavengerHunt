@@ -72,12 +72,12 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         }*/
         geofencingClient = LocationServices.getGeofencingClient(this);
 
-        //TODO: make bottom navigation view work
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, inGameScavengerLocationFragment.newInstance());
+        //TODO: change newInstance() params
+        transaction.replace(R.id.container, inGameScavengerLocationFragment.newInstance("",""));
         transaction.commit();
     }
 
@@ -88,10 +88,10 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
             Fragment selectedFragment = null;
             switch (item.getItemId()) {
                 case R.id.messages:
-                    selectedFragment = inGameChatFragment.newInstance();
+                    selectedFragment = inGameChatFragment.newInstance("","");
                     break;
                 case R.id.availibleScavLocList:
-                    selectedFragment = inGameScavengerLocationFragment.newInstance();
+                    selectedFragment = inGameScavengerLocationFragment.newInstance("","");
                     break;
             }
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

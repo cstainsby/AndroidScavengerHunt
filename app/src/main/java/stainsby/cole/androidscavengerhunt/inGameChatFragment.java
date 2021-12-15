@@ -25,11 +25,6 @@ public class inGameChatFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public static inGameChatFragment newInstance() {
-        inGameChatFragment fragment = new inGameChatFragment();
-        return fragment;
-    }
-
     public inGameChatFragment() {
         // Required empty public constructor
     }
