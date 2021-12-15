@@ -24,6 +24,15 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_create_game_plot_locations">createGamePlotLocationsActivity
     </string>
+    <string name="name_error_game_list">By: N/A</string>
+    <string name="randomize_locations_btn">Randomize Locations</string>
+    <string name="add_scavenger_location_btn">Add Scavenger Location</string>
+    <string name="number_of_players_txt">Number of Players</string>
+    <string name="enter_the_title_edit">Enter the title</string>
+    <string name="confirm_btn">Confirm</string>
+    <string name="title_txt">Title</string>
+    <string name="create_game_txt">Create Game</string>
+    <string name="play_game_btn">Play Game</string>
     <string name="chat_fragment_label">Game Chat</string>
     <string name="map_fragment_label">Map</string>
 </resources>

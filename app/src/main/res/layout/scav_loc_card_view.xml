@@ -20,7 +20,7 @@
         android:foreground="?android:attr/selectableItemBackground">
 
         <TextView
-            android:id="@+id/gameTitleCardView"
+            android:id="@+id/markerNum"
             android:text=""
             android:textSize="16dp"
             android:textAllCaps="true"
@@ -30,13 +30,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
         <TextView
-            android:id="@+id/gameOwnerText"
+            android:id="@+id/markerLatAndLong"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:text="@string/name_error_game_list"
-            android:textSize="8dp" />
-
+            android:textSize="8dp"/>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

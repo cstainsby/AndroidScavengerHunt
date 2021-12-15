@@ -12,7 +12,7 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Game"
+        android:text="@string/create_game_txt"
         android:textSize="32dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,20 +24,20 @@
         android:id="@+id/createGameButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="Post"
+        android:layout_marginTop="16dp"
+        android:text="@string/confirm_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addScavLocMapButton" />
+        app:layout_constraintTop_toBottomOf="@+id/markerRecyclerView" />
 
 
     <TextView
         android:id="@+id/createGameTitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="288dp"
-        android:text="Title"
+        android:layout_marginTop="32dp"
+        android:text="@string/title_txt"
         android:textSize="16dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/createGameNumPlayersTextView"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:hint="Enter the title"
+        android:hint="@string/enter_the_title_edit"
         android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="@+id/createGameTitleTextView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,10 +62,12 @@
         android:id="@+id/createGameNumPlayersTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of Players"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/number_of_players_txt"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/addScavLocMapButton"
+        app:layout_constraintBottom_toTopOf="@+id/randomMarkers"
         app:layout_constraintEnd_toStartOf="@+id/createGameNumPlayersEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createGameTitleTextView" />
@@ -84,13 +86,37 @@
 
     <Button
         android:id="@+id/addScavLocMapButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="Add Scavenger Location"
+        android:layout_marginStart="11dp"
+        android:text="@string/add_scavenger_location_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/randomMarkers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toEndOf="@+id/randomMarkers"
+        app:layout_constraintTop_toTopOf="@+id/randomMarkers"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/markerRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/createGameButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createGameNumPlayersEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/randomMarkers" />
+
+    <Button
+        android:id="@+id/randomMarkers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="11dp"
+        android:text="@string/randomize_locations_btn"
+        app:layout_constraintEnd_toStartOf="@+id/addScavLocMapButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createGameNumPlayersTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

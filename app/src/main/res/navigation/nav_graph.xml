@@ -3,27 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/MapFragment">
+    app:startDestination="@id/MainActivity">
 
     <fragment
-        android:id="@+id/ChatFragment"
-        android:name="stainsby.cole.androidscavengerhunt.inGameChatFragment"
-        android:label="@string/chat_fragment_label"
-        tools:layout="@layout/fragment_ingame_chat">
+        android:id="@+id/MainActivity"
+        android:name="stainsby.cole.androidscavengerhunt.MainActivity"
+        android:label="@string/main_fragment_label"
+        tools:layout="@layout/activity_main">
 
         <action
-            android:id="@+id/action_ChatFragment_to_MapFragment"
-            app:destination="@id/MapFragment" />
+            android:id="@+id/action_MainActivity_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
     </fragment>
-
     <fragment
-        android:id="@+id/MapFragment"
-        android:name="stainsby.cole.androidscavengerhunt.inGameScavengerLocationFragment"
-        android:label="@string/map_fragment_label"
-        tools:layout="@layout/fragment_ingame_scavenger_location">
+        android:id="@+id/SettingsFragment"
+        android:name="stainsby.cole.androidscavengerhunt.SettingsActivity"
+        android:label="@string/settings_fragment_label"
+        tools:layout="@layout/fragment_settings">
 
         <action
-            android:id="@+id/action_MapFragment_to_ChatFragment"
-            app:destination="@id/ChatFragment" />
+            android:id="@+id/action_SettingsFragment_to_MainActivity"
+            app:destination="@id/MainActivity" />
     </fragment>
+
 </navigation>

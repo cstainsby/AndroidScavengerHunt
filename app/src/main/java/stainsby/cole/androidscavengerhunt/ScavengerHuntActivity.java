@@ -13,11 +13,13 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -31,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -46,6 +49,9 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
 
     private GeofencingClient geofencingClient;
     private PendingIntent pendingIntent;
+    private List<LatLng> scavengerLocations;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final String TAG = "ScavengerHuntActivity";
@@ -62,6 +68,7 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        scavengerLocations = new ArrayList<>();
         // add the other in game fragments to the activity
         /*if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -73,73 +80,43 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         geofencingClient = LocationServices.getGeofencingClient(this);
 
         //TODO: make bottom navigation view work
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        /*BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, inGameScavengerLocationFragment.newInstance());
-        transaction.commit();
+        transaction.commit();*/
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem item) {
-            Fragment selectedFragment = null;
-            switch (item.getItemId()) {
-                case R.id.messages:
-                    selectedFragment = inGameChatFragment.newInstance();
-                    break;
-                case R.id.availibleScavLocList:
-                    selectedFragment = inGameScavengerLocationFragment.newInstance();
-                    break;
-            }
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.container, selectedFragment);
-            transaction.commit();
-            return true;
-        }
-    };
-
-    public void loadGameAttributes(ScavengerHuntGame game) {
-
-        // TODO: 12/13/2021
-        //  set test game attributes just to see if things are working
-
-        List<LatLng> scavLocsTest = new ArrayList<>();
-        scavLocsTest.add(new LatLng(37, -122.08));
-        scavLocsTest.add(new LatLng(37.5, -122.5));
-        game.setScavengerLocations(scavLocsTest);
-
-
+    public void loadGameAttributes() {
         // set game attributes
         // based on the given scav locations we will need to determine the size of the geofence
         // search for the location with the largest distance from the center point of all locations
-        List<LatLng> scavLocs = game.getScavengerLocations();
-        LatLng furthestLocation = scavLocs.get(0);
+        LatLng furthestLocation = scavengerLocations.get(0);
         double meanLat = 0.0;
         double meanLong = 0.0;
 
-        if (scavLocs.size() > 0) {
+        if (scavengerLocations.size() > 0) {
 
-            for (int i = 0; i < scavLocs.size(); i++) {
-                meanLat += scavLocs.get(i).latitude;
-                meanLong += scavLocs.get(i).longitude;
+            for (int i = 0; i < scavengerLocations.size(); i++) {
+                meanLat += scavengerLocations.get(i).latitude;
+                meanLong += scavengerLocations.get(i).longitude;
             }
             // this is where the center point for the geofence will be
-            meanLat /= scavLocs.size();
-            meanLong /= scavLocs.size();
+            meanLat /= scavengerLocations.size();
+            meanLong /= scavengerLocations.size();
 
-            for (int i = 0; i < scavLocs.size(); i++) {
+            for (int i = 0; i < scavengerLocations.size(); i++) {
                 double distanceOfFurthest =
                         Math.sqrt(Math.pow(furthestLocation.latitude - meanLat, 2.0)
                                 + Math.pow(furthestLocation.longitude - meanLong, 2.0));
                 double distanceOfI =
-                        Math.sqrt(Math.pow(scavLocs.get(i).latitude - meanLat, 2.0)
-                                + Math.pow(scavLocs.get(i).longitude - meanLong, 2.0));
+                        Math.sqrt(Math.pow(scavengerLocations.get(i).latitude - meanLat, 2.0)
+                                + Math.pow(scavengerLocations.get(i).longitude - meanLong, 2.0));
 
                 if (distanceOfFurthest < distanceOfI) {
-                    furthestLocation = scavLocs.get(i);
+                    furthestLocation = scavengerLocations.get(i);
                 }
             }
         }
@@ -155,31 +132,67 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
         //int offset = random.nextInt(Math.floor(extraSpace));
 
 
-        drawCircle(meanCoordinates, (float)radius);
-        addGeofence(meanCoordinates, (float)radius);
+        Log.d(TAG, "loadGameAttributes: furthest location is ");
+        Log.d(TAG, "loadGameAttributes: drawing circle on user position with radius " + radius);
+        drawCircle(meanCoordinates, 10000.0f);
+        addGeofence(meanCoordinates, 10000.0f);
+
+        for(LatLng latLng : scavengerLocations) {
+            drawCircle(latLng, 1000.0f);
+            addGeofence(latLng, 1000.0f);
+        }
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
         enableUserLocation();
-        //TODO loadGameAttributes();
+
+
+        if (ActivityCompat.checkSelfPermission(ScavengerHuntActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(ScavengerHuntActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Task<Location> locationTask = mFusedLocationProviderClient.getLastLocation();
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        // get user position and set the camera
+                        LatLng userPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(userPosition));
+                        mMap.setMinZoomPreference(10.0f);
+                        mMap.setMaxZoomPreference(18.0f);
+                        CameraUpdateFactory.zoomTo(17.0f);
+                    }
+                }
+            });
+
+            // load previously made markers
+            Intent data = getIntent();
+
+            Integer numScavLocations = data.getIntExtra("numScavLocs", 0);
+
+            for (int i = 0; i < numScavLocations; i++) {
+                double[] latLngDoubleArr = null;
+                try {
+                    latLngDoubleArr = data.getDoubleArrayExtra("cords_" + i);
+                }catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if(latLngDoubleArr != null) {
+                    LatLng latLng = new LatLng(latLngDoubleArr[0], latLngDoubleArr[1]);
+                    scavengerLocations.add(latLng);
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Scavenger Location " + i));
+                }
+            }
+            loadGameAttributes();
+        }
+        else {
+            Log.d(TAG, "onMapReady: error getting location");
+        }
+        Log.d(TAG, "onMapReady: map set");
     }
 
     /**
@@ -345,8 +358,8 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
     private void drawCircle(LatLng latLng, float radius) {
         Log.d(TAG, "drawCircle: drawing circle radius: " + radius + " at lat: " + latLng.latitude + " lng: " + latLng.longitude);
         CircleOptions circleOptions = new CircleOptions();
-        circleOptions.center(new LatLng(-34, 151));
-        circleOptions.radius(200);
+        circleOptions.center(latLng);
+        circleOptions.radius(radius);
         circleOptions.strokeColor(Color.argb(255, 255, 0,0));
         circleOptions.fillColor(Color.argb(64, 255, 0,0));
         circleOptions.strokeWidth(4);
