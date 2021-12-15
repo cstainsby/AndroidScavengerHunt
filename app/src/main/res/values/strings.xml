@@ -33,4 +33,6 @@
     <string name="title_txt">Title</string>
     <string name="create_game_txt">Create Game</string>
     <string name="play_game_btn">Play Game</string>
+    <string name="chat_fragment_label">Game Chat</string>
+    <string name="map_fragment_label">Map</string>
 </resources>

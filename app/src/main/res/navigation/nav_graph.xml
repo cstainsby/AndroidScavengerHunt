@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SettingsFragment"
-        android:name="stainsby.cole.androidscavengerhunt.SettingsFragment"
+        android:name="stainsby.cole.androidscavengerhunt.SettingsActivity"
         android:label="@string/settings_fragment_label"
         tools:layout="@layout/fragment_settings">
 
@@ -25,4 +25,5 @@
             android:id="@+id/action_SettingsFragment_to_MainActivity"
             app:destination="@id/MainActivity" />
     </fragment>
+
 </navigation>
