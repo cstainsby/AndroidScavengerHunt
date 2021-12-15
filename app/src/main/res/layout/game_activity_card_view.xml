@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <androidx.cardview.widget.CardView
     android:id="@+id/gameCardView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-=======
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
->>>>>>> 5543f2256abc12a335701831a67275d95020d4bb
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:layout_margin="8dp"
@@ -17,9 +11,14 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="100dp"
+        android:layout_margin="8dp"
+        card_view:cardElevation="5dp"
+        card_view:cardCornerRadius="4dp"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/gameTitleCardView"
@@ -28,20 +27,6 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
-
-<<<<<<< HEAD
     </LinearLayout>
-</androidx.cardview.widget.CardView>
-=======
-            <TextView
-                android:id="@+id/gameTitleCardView"
-                android:text=""
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</RelativeLayout>
->>>>>>> 5543f2256abc12a335701831a67275d95020d4bb
+</androidx.cardview.widget.CardView>

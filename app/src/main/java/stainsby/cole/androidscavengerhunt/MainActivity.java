@@ -129,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-<<<<<<< HEAD
-=======
 
     private void setupFirebase() {
         // initialize the firebase references
@@ -253,5 +251,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
->>>>>>> e03a01783867dfa0914a50d24642cd4669f58e55
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -205,7 +207,6 @@ public class GameFeedActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, CreateGameActivity.class);
 
                 Log.d(TAG, "onOptionsItemSelected: Going into create activity");
-                Toast.makeText(this, "Create game", Toast.LENGTH_SHORT).show();
                 createGameLauncher.launch(intent);
                 return true;
         }

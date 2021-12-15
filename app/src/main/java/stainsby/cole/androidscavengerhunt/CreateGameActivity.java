@@ -15,6 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreateGameActivity extends AppCompatActivity {
 
     private static final String TAG = "createGameAct";
@@ -23,6 +29,8 @@ public class CreateGameActivity extends AppCompatActivity {
     private EditText numPlayersText;
     private Button postButton;
     private Button seeMapButton;
+
+    private List<LatLng> scavengerLocations;
 
     private ActivityResultLauncher<Intent> mapLauncher;
 
@@ -39,6 +47,8 @@ public class CreateGameActivity extends AppCompatActivity {
             titleText = findViewById(R.id.createGameTitleEditText);
             numPlayersText = findViewById(R.id.createGameNumPlayersEditText);
 
+            scavengerLocations = new ArrayList<>();
+
             postButton = findViewById(R.id.createGameButton);
             postButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -49,6 +59,7 @@ public class CreateGameActivity extends AppCompatActivity {
 
                     // make intent that will be passed back to the game feed
                     Intent intent = new Intent();
+                    intent.putExtra("owner", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
                     intent.putExtra("title", title);
                     intent.putExtra("numPlayers", numPlayers);
 

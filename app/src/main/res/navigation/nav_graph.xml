@@ -3,29 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-<<<<<<< HEAD
-    app:startDestination="@id/FirstFragment">
-
-    <fragment
-        android:id="@+id/FirstFragment"
-        android:name="stainsby.cole.androidscavengerhunt.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="stainsby.cole.androidscavengerhunt.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-=======
     app:startDestination="@id/MainActivity">
 
     <fragment
@@ -47,6 +24,5 @@
         <action
             android:id="@+id/action_SettingsFragment_to_MainActivity"
             app:destination="@id/MainActivity" />
->>>>>>> 5543f2256abc12a335701831a67275d95020d4bb
     </fragment>
 </navigation>
