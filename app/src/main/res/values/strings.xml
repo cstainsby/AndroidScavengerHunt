@@ -24,4 +24,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_create_game_plot_locations">createGamePlotLocationsActivity
     </string>
+    <string name="name_error_game_list">By: N/A</string>
 </resources>

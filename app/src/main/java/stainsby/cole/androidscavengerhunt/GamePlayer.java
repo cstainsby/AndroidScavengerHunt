@@ -18,6 +18,8 @@ public abstract class GamePlayer {
     // each player will have an attached user (account)
     User user;
 
+    String displayName;
+
 
     // user getter
     public User getUser() {

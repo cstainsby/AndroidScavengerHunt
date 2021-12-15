@@ -63,6 +63,14 @@ public class CreateGameActivity extends AppCompatActivity {
                     intent.putExtra("title", title);
                     intent.putExtra("numPlayers", numPlayers);
 
+                    // convert all all scav locs to double arrays to be passed back
+                    // and reinterpreted
+                    for (int i = 0; i < scavengerLocations.size(); i++) {
+                        LatLng latLngAtI = scavengerLocations.get(i);
+                        double[] latLongMarkerCords = { latLngAtI.latitude, latLngAtI.longitude };
+                        intent.putExtra("cords_" + i , latLongMarkerCords);
+                    }
+
                     Log.d(TAG, "onClick: pass back " + title + " " + numPlayers);
 
                     CreateGameActivity.this.setResult(Activity.RESULT_OK, intent);
@@ -75,6 +83,15 @@ public class CreateGameActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent mapIntent = new Intent(CreateGameActivity.this, CreateGamePlotLocationsActivity.class);
+
+                    mapIntent.putExtra("numScavLocs", scavengerLocations.size());
+
+                    for (int i = 0; i < scavengerLocations.size(); i++) {
+                        LatLng latLngAtI = scavengerLocations.get(i);
+                        double[] latLongMarkerCords = { latLngAtI.latitude, latLngAtI.longitude };
+                        intent.putExtra("cords_" + i , latLongMarkerCords);
+                    }
+
                     mapLauncher.launch(mapIntent);
                 }
             });
@@ -85,6 +102,25 @@ public class CreateGameActivity extends AppCompatActivity {
                         public void onActivityResult(ActivityResult result) {
                             // return points that the user has plotted
                             Intent data = result.getData();
+                            if(data != null) {
+                                Integer numScavLocations = data.getIntExtra("numScavLocs", 0);
+
+                                scavengerLocations.clear();
+
+                                // get marker points from map view
+                                for (int i = 0; i < numScavLocations; i++) {
+                                    double[] latLngDoubleArr = null;
+                                    try {
+                                        latLngDoubleArr = data.getDoubleArrayExtra("cords_" + i);
+                                    } catch (NullPointerException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (latLngDoubleArr != null) {
+                                        LatLng latLng = new LatLng(latLngDoubleArr[0], latLngDoubleArr[1]);
+                                        scavengerLocations.add(latLng);
+                                    }
+                                }
+                            }
                         }
                     });
         }

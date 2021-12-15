@@ -17,7 +17,7 @@
         android:id="@+id/saveMarkerButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="rightbottom"
+        android:layout_gravity="bottom"
         android:layout_margin="8dp"
         android:text="Save Markers" />
 </FrameLayout>

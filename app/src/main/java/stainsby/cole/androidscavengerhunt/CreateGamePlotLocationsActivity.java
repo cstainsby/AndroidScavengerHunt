@@ -67,6 +67,8 @@ public class CreateGamePlotLocationsActivity extends FragmentActivity implements
             public void onClick(View view) {
                 Intent intent = getIntent();
 
+                intent.putExtra("numScavLocs", scavengerLocations.size());
+
                 for (int i = 0; i < scavengerLocations.size(); i++) {
                     LatLng latLngAtI = scavengerLocations.get(i);
                     double[] latLongMarkerCords = { latLngAtI.latitude, latLngAtI.longitude };
@@ -107,6 +109,25 @@ public class CreateGamePlotLocationsActivity extends FragmentActivity implements
                     }
                 }
             });
+
+            // load previously made markers
+            Intent data = getIntent();
+
+            Integer numScavLocations = data.getIntExtra("numScavLocs", 0);
+
+            for (int i = 0; i < numScavLocations; i++) {
+                double[] latLngDoubleArr = null;
+                try {
+                    latLngDoubleArr = data.getDoubleArrayExtra("cords_" + i);
+                }catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if(latLngDoubleArr != null) {
+                    LatLng latLng = new LatLng(latLngDoubleArr[0], latLngDoubleArr[1]);
+                    scavengerLocations.add(latLng);
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Scavenger Location " + i));
+                }
+            }
         }
         else {
             Log.d(TAG, "onMapReady: error getting location");

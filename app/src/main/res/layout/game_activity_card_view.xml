@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<androidx.cardview.widget.CardView xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gameCardView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -11,11 +11,10 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_margin="8dp"
+        android:orientation="horizontal"
         card_view:cardElevation="5dp"
         card_view:cardCornerRadius="4dp"
         android:foreground="?android:attr/selectableItemBackground">
@@ -23,10 +22,21 @@
         <TextView
             android:id="@+id/gameTitleCardView"
             android:text=""
+            android:textSize="16dp"
+            android:textAllCaps="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+        <TextView
+            android:id="@+id/gameOwnerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/name_error_game_list"
+            android:textAlignment="center"
+            android:textSize="8dp" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

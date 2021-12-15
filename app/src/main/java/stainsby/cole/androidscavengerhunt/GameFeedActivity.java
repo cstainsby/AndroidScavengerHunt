@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -83,14 +84,34 @@ public class GameFeedActivity extends AppCompatActivity {
 
                             String gameTitle = data.getStringExtra("title");
                             Integer numPlayers = data.getIntExtra("numPlayers", 0);
+                            Integer numScavLocations = data.getIntExtra("numScavLocs", 0);
 
                             // append a hash code to the end of the title as an id to prevent collisions
                             String gameID = gameTitle + "_" + hashCode();
+
+                            // get marker points from map view
+                            for (int i = 0; i < numScavLocations; i++) {
+                                double[] latLngDoubleArr = null;
+                                try {
+                                    latLngDoubleArr = data.getDoubleArrayExtra("cords_" + i);
+                                }catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                }
+                                if(latLngDoubleArr != null) {
+                                    LatLng latLng = new LatLng(latLngDoubleArr[0], latLngDoubleArr[1]);
+                                    mScavengerGameDatabase.child(gameID).child("scavengerLocations").child(String.valueOf(i)).setValue(latLng);
+                                }
+                            }
 
                             // add game items to firebase
                             mScavengerGameDatabase.child(gameID);
                             mScavengerGameDatabase.child(gameID).child("title").setValue(gameTitle);
                             mScavengerGameDatabase.child(gameID).child("numPlayers").setValue(numPlayers);
+
+                            // set the owner of the game
+                            String currentUserDisplayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                            mScavengerGameDatabase.child(gameID).child("owner").setValue(currentUserDisplayName);
+
                             Log.d(TAG, "onActivityResult: add game: " + gameID + " to database");
                             Toast.makeText(GameFeedActivity.this, "Game Posted", Toast.LENGTH_SHORT).show();
                         }
@@ -139,10 +160,12 @@ public class GameFeedActivity extends AppCompatActivity {
                     String gameID = "";
                     String title = "";
                     String numPlayers = "";
+                    String gameOwner = "";
                     try {
                         gameID = game.getValue().toString();
                         title = game.child("title").getValue().toString();
                         numPlayers = game.child("numPlayers").getValue().toString();
+                        gameOwner = game.child("owner").getValue().toString();
                     } catch(NullPointerException e) {
                         e.printStackTrace();
                     }
@@ -150,7 +173,8 @@ public class GameFeedActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: making game object \n    title " + title + "\n    " + numPlayers);
                         games.add(new ScavengerHuntGame(
                                 title,
-                                Integer.parseInt(numPlayers)
+                                Integer.parseInt(numPlayers),
+                                new GameAdmin(gameOwner)
                         ));
                         adapter.notifyItemChanged(i);
                         i++;
@@ -221,6 +245,7 @@ public class GameFeedActivity extends AppCompatActivity {
         class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             private TextView titleView;
+            private TextView gameOwnerView;
 
             // this will be what identifies a game in the database
             // to keep it unique we will structure the name like:
@@ -235,6 +260,7 @@ public class GameFeedActivity extends AppCompatActivity {
 
                 // find and store the views text and image view
                 titleView = itemView.findViewById(R.id.gameTitleCardView);
+                gameOwnerView = itemView.findViewById(R.id.gameOwnerText);
 
                 // connect on click listeners to the view holder
                 itemView.setOnClickListener(this);
@@ -249,9 +275,12 @@ public class GameFeedActivity extends AppCompatActivity {
 
             public void updateView(ScavengerHuntGame game) {
                 // set the updated information to the display
-                Log.d(TAG, "updateView: updating with game object title " + game.getTitle());
+                Log.d(TAG, "updateView: updating with game object title " + game.getTitle() + " by " + game.getAdmin().displayName);
                 String title = game.getTitle();
+                String owner = game.getAdmin().displayName;
+
                 titleView.setText(title);
+                gameOwnerView.setText("By: ".concat(owner));
             }
 
             @Override
