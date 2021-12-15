@@ -31,6 +31,8 @@ public class ScavengerHuntGame {
 
     private List<LatLng> scavengerLocations;
 
+    private List<ChatMessage> messageHistory;
+
 
     public ScavengerHuntGame(String title, int lobbySize) {
         this.id = -1;
@@ -69,28 +71,8 @@ public class ScavengerHuntGame {
     public void setScavengerLocations(List<LatLng> scavengerLocations) {
         this.scavengerLocations = scavengerLocations;
     }
+
+    public void addMessage(ChatMessage message) {
+
+    }
 }
-
-/*
-    In Game XML Code
-
-    <FrameLayout
-        android:id="@+id/chat"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/tasks"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/game_activity_menu" />
- */

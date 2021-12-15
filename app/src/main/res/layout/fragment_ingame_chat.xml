@@ -5,11 +5,37 @@
     android:id="@+id/inGameChatFragement"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".inGameChatFragment">
+    tools:context=".inGameChatFragment"
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="hello from in game chat" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transcriptMode="alwaysScroll"
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/EnterMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:hint="enter message here"/>
+
+    <Button
+        android:id="@+id/SendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_gravity="right|bottom"
+        android:text="send" />
+
+    <include layout="@layout/ingame_chat_card_view" />
+
 </FrameLayout>
