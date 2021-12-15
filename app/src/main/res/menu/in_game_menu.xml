@@ -12,6 +12,4 @@
         android:title="@string/location_list"
         android:icon="@android:drawable/ic_menu_search"
         app:showAsAction="always"/>
-
-
 </menu>

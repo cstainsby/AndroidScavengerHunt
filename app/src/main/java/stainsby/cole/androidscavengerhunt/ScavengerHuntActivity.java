@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +49,6 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
 
     private static final int LOCATION_REQUEST_CODE = 1;
     private static final String TAG = "ScavengerHuntActivity";
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,35 @@ public class ScavengerHuntActivity extends FragmentActivity implements OnMapRead
                     .commit();
         }*/
         geofencingClient = LocationServices.getGeofencingClient(this);
+
+        //TODO: make bottom navigation view work
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, inGameScavengerLocationFragment.newInstance());
+        transaction.commit();
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.messages:
+                    selectedFragment = inGameChatFragment.newInstance();
+                    break;
+                case R.id.availibleScavLocList:
+                    selectedFragment = inGameScavengerLocationFragment.newInstance();
+                    break;
+            }
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, selectedFragment);
+            transaction.commit();
+            return true;
+        }
+    };
 
     public void loadGameAttributes(ScavengerHuntGame game) {
 

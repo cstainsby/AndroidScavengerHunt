@@ -24,6 +24,11 @@ public class inGameScavengerLocationFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    public static inGameScavengerLocationFragment newInstance() {
+        inGameScavengerLocationFragment fragment = new inGameScavengerLocationFragment();
+        return fragment;
+    }
+
     public inGameScavengerLocationFragment() {
         // Required empty public constructor
     }

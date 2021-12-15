@@ -3,6 +3,7 @@ package stainsby.cole.androidscavengerhunt;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,11 @@ public class inGameChatFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    public static inGameChatFragment newInstance() {
+        inGameChatFragment fragment = new inGameChatFragment();
+        return fragment;
+    }
 
     public inGameChatFragment() {
         // Required empty public constructor

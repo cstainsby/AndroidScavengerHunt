@@ -89,24 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        /*//TODO make username request only display once
-        editTextUserName = findViewById(R.id.testFirebaseEntryUsername);
-        createButton = findViewById(R.id.createNewUserButton);
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if( !editTextUserName.getText().toString().equals("") )
-                userName = editTextUserName.getText().toString();
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                user.getUid();
-
-                currentUser = new User(currentUID, user.getDisplayName());
-                mDatabase.child("users").child(currentUID).setValue(currentUser);
-
-            }
-        });*/
-
         // TODO this implementation should probably be changed
         toFeedButton = findViewById(R.id.toGameFeedButton);
         toFeedButton.setOnClickListener(new View.OnClickListener() {
@@ -129,47 +111,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-<<<<<<< HEAD
-=======
 
     private void setupFirebase() {
         // initialize the firebase references
         FirebaseApp.initializeApp(this);
         mFirebaseDatabase =
                 FirebaseDatabase.getInstance();
-
-        //TODO delete messages reference
-        mMessagesDatabaseReference =
-                mFirebaseDatabase.getReference()
-                        .child("messages");
-        mMessagesChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildAdded: " + s);
-                ChatMessage chatMessage =
-                        dataSnapshot.getValue(ChatMessage.class);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -219,10 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
         currentUser = new User(user.getUid(), user.getDisplayName());
         mDatabase.child("users").child(user.getUid()).setValue(currentUser);
-
-        // listen for database changes with childeventlistener
-        // wire it up!
-        mMessagesDatabaseReference.addChildEventListener(mMessagesChildEventListener);
     }
 
     @Override
@@ -253,5 +196,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
->>>>>>> e03a01783867dfa0914a50d24642cd4669f58e55
 }
