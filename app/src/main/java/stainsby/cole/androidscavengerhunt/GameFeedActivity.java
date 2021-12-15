@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,12 +83,17 @@ public class GameFeedActivity extends AppCompatActivity {
                         if(result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
 
+                            ScavengerHuntGame game = new ScavengerHuntGame();
+
                             String gameTitle = data.getStringExtra("title");
                             Integer numPlayers = data.getIntExtra("numPlayers", 0);
                             Integer numScavLocations = data.getIntExtra("numScavLocs", 0);
 
                             // append a hash code to the end of the title as an id to prevent collisions
                             String gameID = gameTitle + "_" + hashCode();
+
+                            String currentUserDisplayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
 
                             // get marker points from map view
                             for (int i = 0; i < numScavLocations; i++) {
@@ -99,18 +105,30 @@ public class GameFeedActivity extends AppCompatActivity {
                                 }
                                 if(latLngDoubleArr != null) {
                                     LatLng latLng = new LatLng(latLngDoubleArr[0], latLngDoubleArr[1]);
-                                    mScavengerGameDatabase.child(gameID).child("scavengerLocations").child(String.valueOf(i)).setValue(latLng);
+                                    game.addScavengerLocation(latLng);
                                 }
                             }
 
-                            // add game items to firebase
-                            mScavengerGameDatabase.child(gameID);
+                            // add game items to object then push to firebase
+                            game.setId(gameID);
+                            game.setTitle(gameTitle);
+                            game.setNumPlayers(numPlayers);
+                            GameAdmin admin = new GameAdmin(currentUserDisplayName);
+                            game.setAdmin(admin);
+
+
                             mScavengerGameDatabase.child(gameID).child("title").setValue(gameTitle);
                             mScavengerGameDatabase.child(gameID).child("numPlayers").setValue(numPlayers);
+                            mScavengerGameDatabase.child(gameID).child("Owner").setValue(currentUserDisplayName);
+                            mScavengerGameDatabase.child(gameID).child("numScavLocations").setValue(numScavLocations);
 
-                            // set the owner of the game
-                            String currentUserDisplayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                            mScavengerGameDatabase.child(gameID).child("owner").setValue(currentUserDisplayName);
+                            // add all scav location coordinates
+                            Log.d(TAG, "onActivityResult: size of locations " + game.getScavengerLocations().size());
+                            List<LatLng> cords = game.getScavengerLocations();
+                            for (int i = 0; i < numScavLocations; i++) {
+                                mScavengerGameDatabase.child(gameID).child("cords_" + i)
+                                        .setValue(cords.get(i).latitude + " " + cords.get(i).longitude);
+                            }
 
                             Log.d(TAG, "onActivityResult: add game: " + gameID + " to database");
                             Toast.makeText(GameFeedActivity.this, "Game Posted", Toast.LENGTH_SHORT).show();
@@ -156,31 +174,48 @@ public class GameFeedActivity extends AppCompatActivity {
                 //  this will also allow me to see how many players are registered to play the game
                 //  Authentication needed
 
-                for (DataSnapshot game : snapshot.getChildren()) {
-                    String gameID = "";
-                    String title = "";
-                    String numPlayers = "";
-                    String gameOwner = "";
-                    try {
-                        gameID = game.getValue().toString();
-                        title = game.child("title").getValue().toString();
-                        numPlayers = game.child("numPlayers").getValue().toString();
-                        gameOwner = game.child("owner").getValue().toString();
-                    } catch(NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                    if(!title.equals("") && !numPlayers.equals("")) {
-                        Log.d(TAG, "onDataChange: making game object \n    title " + title + "\n    " + numPlayers);
-                        games.add(new ScavengerHuntGame(
-                                title,
-                                Integer.parseInt(numPlayers),
-                                new GameAdmin(gameOwner)
-                        ));
+                for (DataSnapshot gameSnapshot : snapshot.getChildren()) {
+
+                    ScavengerHuntGame game = new ScavengerHuntGame();
+
+                    //String gameID = gameSnapshot.getValue(String.class);
+                    String title = gameSnapshot.child("title").getValue(String.class);
+                    Integer numPlayers = gameSnapshot.child("numPlayers").getValue(Integer.class);
+                    String Owner = gameSnapshot.child("Owner").getValue(String.class);
+                    Integer numScavLocations = gameSnapshot.child("numScavLocations").getValue(Integer.class);
+
+                    Log.d(TAG, "onDataChange: " + title + " " + numPlayers + " " + Owner + " " + numScavLocations);
+
+
+                    /*if(numScavLocationsStr != null && numPlayersStr != null) {
+                        numScavLocations = Integer.parseInt(numScavLocationsStr);
+                        numPlayers = Integer.parseInt(numPlayersStr);
+                    }*/
+
+
+                    if(numScavLocations != null) {
+                        for (int j = 0; j < numScavLocations; j++) {
+                            String cords = gameSnapshot.child("cords_" + j).getValue(String.class);
+                            Log.d(TAG, "onDataChange: cords: " + cords);
+                            String[] split_cords = cords.split("\\s+");
+
+                            game.addScavengerLocation(new LatLng(Double.parseDouble(split_cords[0]), Double.parseDouble(split_cords[1])));
+                        }
+
+                        //game.setId(gameID);
+                        game.setTitle(title);
+                        game.setNumPlayers(numPlayers);
+                        game.setAdmin(new GameAdmin(Owner));
+                        game.setNumScavengerLocations(numScavLocations);
+                        Log.d(TAG, "onDataChange: " + title + " " + Owner + " " + numPlayers);
+
+                        games.add(game);
+
                         adapter.notifyItemChanged(i);
                         i++;
                     }
                     else {
-                        Log.d(TAG, "onDataChange: error, empty input");
+                        Toast.makeText(GameFeedActivity.this, "error loading data", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -190,27 +225,6 @@ public class GameFeedActivity extends AppCompatActivity {
                 Log.d(TAG, "onCancelled: Error reading from database on change");
             }
         });
-
-        // setup the token for the client app instance
-        //
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        // Log and toast
-                        String msg = "new token: " + token;
-                        Log.d(TAG, msg);
-                        Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     // inflate the menu
@@ -286,43 +300,24 @@ public class GameFeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String topic = this.gameID;      // topic will be the game you are joining/leaving
-                /*Message.builder()
-                        .putData("score", "850")
-                        .putData("time", "2:45")
-                        .setTopic(topic)
-                        .build();*/
 
-                if(!gameJoined) {
-                    view.setBackgroundColor(getResources().getColor(R.color.browser_actions_bg_grey));
-                    // subscribe to the id of the game that the view is holding
-                    FirebaseMessaging.getInstance().subscribeToTopic("")
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    String msg = "Game joined";
-                                    if (!task.isSuccessful()) {
-                                        msg = "Failed to join game";
-                                    }
-                                    Log.d(TAG, "onComplete: " + msg);
-                                    Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                Intent newGameIntent = new Intent(GameFeedActivity.this, ScavengerHuntActivity.class);
+
+                int gameSelectedPosition = getAdapterPosition();
+                ScavengerHuntGame gameSelected = games.get(gameSelectedPosition);
+
+                newGameIntent.putExtra("title", gameSelected.getTitle());
+                newGameIntent.putExtra("numScavLocs", gameSelected.getScavengerLocations().size());
+
+                for (int i = 0; i < gameSelected.getScavengerLocations().size(); i++) {
+                    LatLng latLngAtI = gameSelected.getScavengerLocations().get(i);
+                    double[] latLongMarkerCords = { latLngAtI.latitude, latLngAtI.longitude };
+                    newGameIntent.putExtra("cords_" + i , latLongMarkerCords);
+
+                    Log.d(TAG, "onClick: put " + latLongMarkerCords.toString() + "into intent");
                 }
-                else {
-                    view.setBackgroundColor(getResources().getColor(R.color.white));
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic("")
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    String msg = "You have left the game queue";
-                                    if (!task.isSuccessful()) {
-                                        msg = "Failed to leave game";
-                                    }
-                                    Log.d(TAG, "onComplete: " + msg);
-                                    Toast.makeText(GameFeedActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
+
+                startGameLauncher.launch(newGameIntent);
             }
         }
         //---------------------------------------------

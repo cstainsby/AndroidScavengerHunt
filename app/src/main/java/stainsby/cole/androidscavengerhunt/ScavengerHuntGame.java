@@ -13,6 +13,7 @@ package stainsby.cole.androidscavengerhunt;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScavengerHuntGame {
@@ -23,21 +24,38 @@ public class ScavengerHuntGame {
     // the players that will be participating in the game
     private List<GameParticipant> players;
 
-    private int id;
+    private String id;
 
-    private int lobbySize;
+    private int numPlayers;
 
     private String title;
 
     private List<LatLng> scavengerLocations;
 
+    private int numScavengerLocations;
 
-    public ScavengerHuntGame(String title, int lobbySize, GameAdmin admin) {
-        this.id = -1;
-        // TODO build this out, just using title for now, for demo purposes
+    public ScavengerHuntGame() {
+        players = new ArrayList<>();
+        scavengerLocations = new ArrayList<>();
+
+        this.id = "N/A";
+        this.title = "N/A";
+        this.numPlayers = -1;
+        this.admin = new GameAdmin("");
+        this.numScavengerLocations = 0;
+    }
+
+
+    public ScavengerHuntGame(String id, String title, int numPlayers, int numScavengerLocations, GameAdmin admin, List<LatLng> scavengerLocations) {
+        players = new ArrayList<>();
+        scavengerLocations = new ArrayList<>();
+
+        this.id = id;
         this.title = title;
-        this.lobbySize = lobbySize;
+        this.numPlayers = numPlayers;
         this.admin = admin;
+        this.numScavengerLocations = numScavengerLocations;
+        this.scavengerLocations = scavengerLocations;
     }
 
     //-------------------------------------------------
@@ -51,9 +69,25 @@ public class ScavengerHuntGame {
         return scavengerLocations;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public GameAdmin getAdmin() {
+        return admin;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
     //-------------------------------------------------
     // setters
     //-------------------------------------------------
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -71,7 +105,16 @@ public class ScavengerHuntGame {
         this.scavengerLocations = scavengerLocations;
     }
 
-    public GameAdmin getAdmin() {
-        return admin;
+
+    public void setNumPlayers(int numPlayers) {
+        this.numPlayers = numPlayers;
+    }
+
+    public void addScavengerLocation(LatLng latLng) {
+        this.scavengerLocations.add(latLng);
+    }
+
+    public void setNumScavengerLocations(int numScavengerLocations) {
+        this.numScavengerLocations = numScavengerLocations;
     }
 }

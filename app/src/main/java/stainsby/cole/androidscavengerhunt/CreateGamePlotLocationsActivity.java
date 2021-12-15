@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import stainsby.cole.androidscavengerhunt.databinding.ActivityCreateGamePlotLocationsBinding;
@@ -60,6 +61,8 @@ public class CreateGamePlotLocationsActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        scavengerLocations = new ArrayList<>();
+
 
         saveMarkerButton = findViewById(R.id.saveMarkerButton);
         saveMarkerButton.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +70,7 @@ public class CreateGamePlotLocationsActivity extends FragmentActivity implements
             public void onClick(View view) {
                 Intent intent = getIntent();
 
+                Log.d(TAG, "onClick: num locs " + scavengerLocations.size());
                 intent.putExtra("numScavLocs", scavengerLocations.size());
 
                 for (int i = 0; i < scavengerLocations.size(); i++) {
@@ -102,6 +106,8 @@ public class CreateGamePlotLocationsActivity extends FragmentActivity implements
                         mMap.setMinZoomPreference(10.0f);
                         mMap.setMaxZoomPreference(18.0f);
                         CameraUpdateFactory.zoomTo(17.0f);
+
+                        mMap.setOnMapLongClickListener(CreateGamePlotLocationsActivity.this);
 
                         Log.d(TAG, "onSuccess: saving location locally");
                         lastKnownLocation = location;
